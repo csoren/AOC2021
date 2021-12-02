@@ -30,13 +30,12 @@ module Star2 = struct
 end
 
 
-let print_result name process commands =
-  let (horizontal, depth) = process commands in
+let print_result name (horizontal, depth) =
   Printf.printf "%s: horizontal %d, depth %d, result = %d\n" name horizontal depth (horizontal * depth)
 
   
 let () =
-  print_result "(1) Test data" Star1.process_commands test_commands;
-  print_result "(1) Puzzle data" Star1.process_commands puzzle_commands;
-  print_result "(2) Test data" Star2.process_commands test_commands;
-  print_result "(2) Puzzle data" Star2.process_commands puzzle_commands
+  print_result "(1) Test data" (Star1.process_commands test_commands);
+  print_result "(1) Puzzle data" (Star1.process_commands puzzle_commands);
+  print_result "(2) Test data" (Star2.process_commands test_commands);
+  print_result "(2) Puzzle data" (Star2.process_commands puzzle_commands)
