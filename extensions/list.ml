@@ -12,20 +12,23 @@ let int_list_list_to_string = to_string int_list_to_string
 
 let of_textfile_lines file =
   let channel = open_in file in
-  let rec loop () =
-    try
-      let next = input_line channel in
-      next :: loop ()
-    with End_of_file ->
-      close_in channel;
-      []
-    in
-  loop ()
+  let rec loop acc =
+    match
+      try Some (input_line channel)
+      with End_of_file -> None
+    with
+    | None -> acc
+    | Some v -> (loop [@tailcall]) (v :: acc)
+  in
+  rev @@ loop []
 
-let rec window size list =
-  let w = take size list in
-  if length w < size then []
-  else w :: window size (drop 1 list)
+let window size list =
+  let rec window' list acc = 
+    let w = take size list in
+    if length w < size then acc
+    else (window' [@tailcall]) (drop 1 list) (w :: acc)
+  in
+  rev (window' list [])
 
 let sum op list =
   match list with
