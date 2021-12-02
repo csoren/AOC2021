@@ -15,14 +15,6 @@ module Star1 = struct
   | Up x -> (horizontal, depth - x)
 
   let process_commands = List.fold_left new_position (0,0)
-
-  let print_result name commands =
-    let (horizontal, depth) = process_commands commands in
-    Printf.printf "%s: horizontal %d, depth %d, result = %d\n" name horizontal depth (horizontal * depth)
-
-  let solutions () =
-    print_result "Test data" test_commands;
-    print_result "Puzzle data" puzzle_commands
 end
 
 
@@ -32,18 +24,19 @@ module Star2 = struct
   | Down x -> (horizontal, depth, aim + x)
   | Up x -> (horizontal, depth, aim - x)
 
-  let process_commands = List.fold_left new_position (0,0,0)
-
-  let print_result name commands =
-    let (horizontal, depth, _) = process_commands commands in
-    Printf.printf "%s: horizontal %d, depth %d, result = %d\n" name horizontal depth (horizontal * depth)
-
-  let solutions () =
-    print_result "Test data" test_commands;
-    print_result "Puzzle data" puzzle_commands
+  let process_commands commands =
+    let (horizontal, depth, _) = List.fold_left new_position (0,0,0) commands in
+    (horizontal, depth)
 end
 
 
+let print_result name process commands =
+  let (horizontal, depth) = process commands in
+  Printf.printf "%s: horizontal %d, depth %d, result = %d\n" name horizontal depth (horizontal * depth)
+
+  
 let () =
-  Star1.solutions ();
-  Star2.solutions ()
+  print_result "(1) Test data" Star1.process_commands test_commands;
+  print_result "(1) Puzzle data" Star1.process_commands puzzle_commands;
+  print_result "(2) Test data" Star2.process_commands test_commands;
+  print_result "(2) Puzzle data" Star2.process_commands puzzle_commands
