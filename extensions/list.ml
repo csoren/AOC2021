@@ -12,11 +12,13 @@ let int_list_list_to_string = to_string int_list_to_string
 
 let of_textfile_lines file =
   let channel = open_in file in
+  let line_opt () = 
+    try Some (input_line channel)
+    with End_of_file -> close_in channel; None
+  in
   let rec loop acc =
-    match
-      try Some (input_line channel)
-      with End_of_file -> None
-    with
+    (* Option.map_default could be used here but it is much harder to read *)
+    match line_opt () with
     | None -> acc
     | Some v -> (loop [@tailcall]) (v :: acc)
   in
@@ -28,7 +30,7 @@ let window size list =
     if length w < size then acc
     else (window' [@tailcall]) (drop 1 list) (w :: acc)
   in
-  rev (window' list [])
+  rev @@ window' list []
 
 let sum op list =
   match list with
