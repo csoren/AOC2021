@@ -12,11 +12,7 @@ let test_data = [
 
 (** [delta list] creates a list of the change between successive elements of [list]  *)
 let delta list =
-  let sub = function
-    | [lhs; rhs] -> rhs - lhs
-    | _ -> 0
-  in
-  List.window 2 list |> List.map (sub)
+  List.window 2 list |> List.map (List.sum @@ Fun.flip (-))
 
 (** [positive_deltas list] counts the positive changes between successive elements of [list] *)
 let positive_deltas list =
@@ -28,13 +24,13 @@ let triplet_sums list =
   
     
 let puzzle1 () =
-  Printf.printf "Test data: %d\n" (test_data |> positive_deltas);
-  Printf.printf "Puzzle data: %d\n" (puzzle_data |> positive_deltas)
+  Printf.printf "(1) Test data: %d\n" (test_data |> positive_deltas);
+  Printf.printf "(1) Puzzle data: %d\n" (puzzle_data |> positive_deltas)
 
 
 let puzzle2 () =
-  Printf.printf "Test data: %d\n" (test_data |> triplet_sums |> positive_deltas);
-  Printf.printf "Puzzle data: %d\n" (puzzle_data |> triplet_sums |> positive_deltas)
+  Printf.printf "(2) Test data: %d\n" (test_data |> triplet_sums |> positive_deltas);
+  Printf.printf "(2) Puzzle data: %d\n" (puzzle_data |> triplet_sums |> positive_deltas)
   
   
 let () =
