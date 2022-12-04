@@ -1,7 +1,8 @@
+open Batteries
 open Extensions
 
 let puzzle_data =
-  List.of_textfile_lines "puzzle-input"
+  Extlist.of_textfile_lines "puzzle-input"
   |> List.map int_of_string
 
 
@@ -12,15 +13,15 @@ let test_data = [
 
 (** [delta list] creates a list of the change between successive elements of [list]  *)
 let delta list =
-  List.window 2 list |> List.map (List.sum @@ Fun.flip (-))
+  Extlist.window 2 list |> List.map (Extlist.sum @@ Fun.flip (-))
 
 (** [positive_deltas list] counts the positive changes between successive elements of [list] *)
 let positive_deltas list =
-  list |> delta |> List.count (fun v -> v > 0)
+  list |> delta |> Extlist.count (fun v -> v > 0)
 
 (** [triplet_sums list] sums the triplets found in a three element sliding window in [list] *)  
 let triplet_sums list =
-  List.window 3 list |> List.map (List.sum (+))
+  Extlist.window 3 list |> List.map (Extlist.sum (+))
   
     
 let puzzle1 () =
@@ -34,5 +35,6 @@ let puzzle2 () =
   
   
 let () =
+  print_newline ();
   puzzle1 ();
   puzzle2 ()

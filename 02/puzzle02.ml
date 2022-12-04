@@ -5,7 +5,7 @@ let test_commands = commands_of_list [
   "forward 5"; "down 5"; "forward 8"; "up 3"; "down 8"; "forward 2"; 
 ]
 
-let puzzle_commands = List.of_textfile_lines "puzzle-input" |> commands_of_list
+let puzzle_commands = Extlist.of_textfile_lines "puzzle-input" |> commands_of_list
 
 
 module Star1 = struct

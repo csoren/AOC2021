@@ -1,7 +1,7 @@
 {
     "ocaml.sandbox": {
         "kind": "opam",
-        "switch": "4.13.1+flambda"
+        "switch": "${workspaceFolder:AOC2021}"
     },
     "files.exclude": {
         "_build": true,

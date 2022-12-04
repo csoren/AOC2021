@@ -1,4 +1,5 @@
-include ExtList.List
+open Batteries
+include List
 
 let unfold f seed =
   let rec unfold' f seed acc =
@@ -27,10 +28,7 @@ let int_list_to_string = to_string string_of_int
 let int_list_list_to_string = to_string int_list_to_string
 
 let of_textfile_lines file =
-  let channel = open_in file in
-  let result = generate (fun () -> Io.line_opt channel) in
-  close_in channel;
-  result
+  File.lines_of file |> List.of_enum
 
 let window size list =
   let rec window' list acc = 
@@ -59,4 +57,3 @@ let sum op list =
   match list with
   | [] -> failwith "Empty list"
   | h :: tail -> fold_left op h tail
-
