@@ -2,5 +2,10 @@
     "ocaml.sandbox": {
         "kind": "opam",
         "switch": "4.13.1+flambda"
+    },
+    "files.exclude": {
+        "_build": true,
+        "_opam": true,
+        ".initialized": true
     }
 }
