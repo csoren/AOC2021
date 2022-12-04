@@ -1,11 +1,12 @@
-open Extensions
+open Batteries
 open Parser
 
-let test_commands = commands_of_list [
+let test_commands = List.map command_of_string [
   "forward 5"; "down 5"; "forward 8"; "up 3"; "down 8"; "forward 2"; 
 ]
 
-let puzzle_commands = Extlist.of_textfile_lines "puzzle-input" |> commands_of_list
+let puzzle_commands = 
+  File.lines_of "puzzle-input" |> List.of_enum |> List.map command_of_string
 
 
 module Star1 = struct

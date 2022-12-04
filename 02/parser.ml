@@ -1,3 +1,5 @@
+open Batteries
+
 type command =
   | Forward of int
   | Down of int
@@ -11,9 +13,5 @@ let make_command direction distance =
   | _ -> failwith "Unknown direction"
 
 let command_of_string s =
-  match (String.split_on_char ' ' s) with
-  | [ direction; distance ] -> make_command direction (int_of_string distance)
-  | _ -> failwith "Can't parse command"
-
-let commands_of_list list =
-  list |> List.map command_of_string
+  let (direction, distance) = String.split s ~by:" " in
+  make_command direction (int_of_string distance)
