@@ -14,18 +14,17 @@ let (bag, cards) =
     List.map string_list_to_card (List.tl sections)
   )
 
-let check_list_bingo drawn =
+let check_line_bingo drawn =
   List.for_all (Fun.flip Set.contains drawn)
 
-let find_list_bingo drawn =
-  List.find_opt (check_list_bingo drawn)
+let check_lines_bingo drawn =
+  List.exists (check_line_bingo drawn)
 
 let check_card_bingo drawn card =
-  Matrix.columns card |> find_list_bingo drawn
-  |> Option.or_else (fun () -> Matrix.rows card |> find_list_bingo drawn)
+  (Matrix.columns card |> check_lines_bingo drawn) || (Matrix.rows card |> check_lines_bingo drawn)
 
 let check_cards_bingo drawn =
-  List.find_opt (check_card_bingo drawn %> Option.is_some)
+  List.find_opt (check_card_bingo drawn)
 
 module Part1 = struct
   let bingo cards =
@@ -35,7 +34,7 @@ module Part1 = struct
       let drawn' = Set.add called_number drawn in
       match check_cards_bingo drawn' cards with
       | None -> bingo' drawn' bag' cards
-      | Some card -> Some (card, called_number, drawn')
+      | Some card -> Some (card, called_number, drawn', bag')
     in
     bingo' Set.empty bag cards |> Option.get
   
@@ -45,14 +44,14 @@ module Part1 = struct
     Matrix.map_rows sum_row card |> List.sum
 
   let score cards =
-    let (card, called_number, drawn) = bingo cards in
+    let (card, called_number, drawn, _) = bingo cards in
     let card_sum = sum_not_drawn card drawn in
     called_number * card_sum
 
   let print () =
     Printf.printf "Part 1, final score: %d\n" (score cards)
-
 end
+
 
 let () =
   print_newline ();
