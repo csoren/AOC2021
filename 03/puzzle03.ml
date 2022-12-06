@@ -5,19 +5,25 @@ open Extensions
 let input =
   File.lines_of "puzzle-input" |> List.of_enum
 
+  (*
+let input = [ 
+  "00100"; "11110"; "10110"; "10111"; "10101"; "01111"; "00111"; "11100"; "10000"; "11001"; "00010"; "01010" ]
+*)
+
 let char_is_one = (=) '1'
 
 let bits =
   input |> List.map (String.to_list %> List.map char_is_one) |> Matrix.of_rows
 
-let count_ones =
-  List.count_matching Fun.id
+let count_ones = List.count_matching Fun.id
 
 let most_common_bit l =
-  count_ones l >= List.length l / 2
+  let count = count_ones l in
+  count >= (List.length l - count)
 
 let least_common_bit l =
-  count_ones l < List.length l / 2
+  let count = count_ones l in
+  count < (List.length l - count)
 
 let bits_to_int =
   List.fold_left (fun acc bit -> (acc * 2) + Bool.to_int bit) 0
@@ -49,27 +55,30 @@ module Part2 = struct
   let least_common_column_bit column m =
     Matrix.column column m |> least_common_bit
 
-  let filter_bit common_bit m column =
-    let bit = common_bit column m in
-    Matrix.filter_rows (fun row -> List.at row column = bit) m
+  let filter_rows bit column_index m =
+    let match_row row = List.at row column_index = bit in
+    Matrix.filter_rows match_row m
 
-  let filter_values common_bit =
+  let filter_by_column most_common_bit_of m column_index =
+    match Matrix.height m with
+    | 0 | 1 -> m
+    | _ ->
+        let bit = most_common_bit_of column_index m in
+        filter_rows bit column_index m
+
+  let filter_values most_common_bit_of =
     List.range 0 `To (Matrix.width bits - 1)
-    |> List.grade (filter_bit common_bit) bits 
-    |> List.find_opt (Matrix.height %> (=) 1)
-    |> Option.get
+    |> List.grade (filter_by_column most_common_bit_of) bits 
+    |> List.last
 
-  let solve common_bit =
-    filter_values common_bit |> Matrix.row 0 |> bits_to_int
+  let solve most_common_bit_of =
+    filter_values most_common_bit_of |> Matrix.row 0 |> bits_to_int
 
-  let oxygen = solve most_common_column_bit
-
-  let co2 = solve least_common_column_bit
+  let (oxygen, co2) =
+    (solve most_common_column_bit, solve least_common_column_bit)
 
   let print_solution () =
-    Printf.printf "Oxygen: %d\n" oxygen;
-    Printf.printf "CO2: %d\n" co2;
-    ()
+    Printf.printf "Part 2, result %d\n" (oxygen * co2)
 end
 
 let () =

@@ -5,6 +5,8 @@ type 'a t = 'a array array
 let make columns rows init =
   Array.make_matrix columns rows init
 
+let is_empty = ExtArray.is_empty
+
 let width (m: 'a t) = Array.length m
 
 let column n (m: 'a t) =
@@ -22,9 +24,12 @@ let row n (m: 'a t) =
   |> List.rev
 
 let transpose (m: 'a t) =
-  List.range 0 `To (height m - 1)
-  |> List.map (Fun.flip row m %> Array.of_list)
-  |> Array.of_list
+  if is_empty m then
+    [||]
+  else
+    List.range 0 `To (height m - 1)
+    |> List.map (Fun.flip row m %> Array.of_list)
+    |> Array.of_list
 
 let rows (m: 'a t) =
   transpose m |> columns
@@ -37,3 +42,9 @@ let of_rows rows =
 
 let filter_rows fn (m: 'a t) =
   rows m |> List.filter fn |> of_rows
+
+let map_rows fn (m: 'a t) =
+  rows m |> List.map fn
+
+let to_string m =
+  rows m |> ExtList.bool_list_list_to_string
