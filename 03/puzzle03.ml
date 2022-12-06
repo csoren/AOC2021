@@ -12,8 +12,8 @@ let input = [
 
 let char_is_one = (=) '1'
 
-let bits =
-  input |> List.map (String.to_list %> List.map char_is_one) |> Matrix.of_rows
+let bits m =
+  m |> List.map (String.to_list %> List.map char_is_one) |> Matrix.of_rows
 
 let count_ones = List.count_matching Fun.id
 
@@ -32,16 +32,16 @@ let bits_to_int =
 (* Part 1 *)
 
 module Part1 = struct
-  let most_common_bits =
-    Matrix.columns bits |> List.map most_common_bit
+  let most_common_bits m =
+    Matrix.columns m |> List.map most_common_bit
 
-  let inverted_bits =
-    most_common_bits |> List.map Bool.not
-
-  let (gamma, epsilon) =
-    (most_common_bits |> bits_to_int, inverted_bits |> bits_to_int)
+  let inverted_bits m =
+    most_common_bits m |> List.map Bool.not
 
   let print_solution () =
+    let m = bits input in
+    let gamma = most_common_bits m |> bits_to_int in
+    let epsilon = inverted_bits m |> bits_to_int in
     Printf.printf "Part 1, result %d\n" (gamma * epsilon)
 end
 
@@ -55,24 +55,22 @@ module Part2 = struct
   let least_common_column_bit column m =
     Matrix.column column m |> least_common_bit
 
-  let filter_rows bit column_index m =
+  let filter_rows column_index m bit =
     let match_row row = List.at row column_index = bit in
     Matrix.filter_rows match_row m
 
   let filter_by_column most_common_bit_of m column_index =
     match Matrix.height m with
     | 0 | 1 -> m
-    | _ ->
-        let bit = most_common_bit_of column_index m in
-        filter_rows bit column_index m
+    | _ -> most_common_bit_of column_index m |> filter_rows column_index m
 
-  let filter_values most_common_bit_of =
-    List.range 0 `To (Matrix.width bits - 1)
-    |> List.grade (filter_by_column most_common_bit_of) bits 
+  let filter_values most_common_bit_of m =
+    List.range 0 `To (Matrix.width m - 1)
+    |> List.grade (filter_by_column most_common_bit_of) m
     |> List.last
 
   let solve most_common_bit_of =
-    filter_values most_common_bit_of |> Matrix.row 0 |> bits_to_int
+    bits input |> filter_values most_common_bit_of |> Matrix.row 0 |> bits_to_int
 
   let (oxygen, co2) =
     (solve most_common_column_bit, solve least_common_column_bit)
@@ -85,5 +83,3 @@ let () =
   print_newline ();
   Part1.print_solution ();
   Part2.print_solution ()
-
-
